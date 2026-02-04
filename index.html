@@ -1,0 +1,740 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>VIPCell | Seu Mundo Tecnológico</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap');
+
+        :root {
+            --neon-green: #39ff14; 
+            --dark-bg: #0a0a0a;
+            --card-bg: #1a1a1a;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--dark-bg);
+            color: white;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .neon-text {
+            color: var(--neon-green);
+            text-shadow: 0 0 10px rgba(57, 255, 20, 0.5);
+        }
+
+        .neon-border {
+            border: 1px solid var(--neon-green);
+            box-shadow: 0 0 15px rgba(57, 255, 20, 0.2);
+        }
+
+        .glass {
+            background: rgba(20, 20, 20, 0.85);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        /* Animação de Flutuação */
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-12px); }
+            100% { transform: translateY(0px); }
+        }
+
+        .floating {
+            animation: float 4s ease-in-out infinite;
+        }
+
+        /* Transições de Tela */
+        #intro-screen, #product-screen {
+            transition: opacity 0.5s ease-in-out;
+        }
+        
+        .hidden-screen {
+            display: none !important;
+            opacity: 0;
+        }
+
+        /* Controle de Abas */
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: grid;
+            animation: fadeIn 0.5s ease-out forwards;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .category-btn {
+            transition: all 0.3s ease;
+        }
+
+        .category-btn.active {
+            background-color: var(--neon-green);
+            color: black;
+            box-shadow: 0 0 20px rgba(57, 255, 20, 0.4);
+            border-color: var(--neon-green);
+            transform: scale(1.05);
+        }
+
+        /* Cards de Produtos */
+        .product-card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+            position: relative;
+            z-index: 1;
+        }
+
+        .product-card:hover {
+            transform: translateY(-8px);
+            border-color: var(--neon-green);
+            box-shadow: 0 10px 40px -10px rgba(57, 255, 20, 0.15);
+            z-index: 10;
+        }
+
+        .product-img-container {
+            width: 100%;
+            height: 250px;
+            overflow: hidden;
+            background: radial-gradient(circle at center, #1f1f1f 0%, #0a0a0a 100%);
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .product-img-container img {
+            max-width: 90%;
+            max-height: 90%;
+            object-fit: contain;
+            transition: transform 0.5s ease;
+            filter: drop-shadow(0 10px 10px rgba(0,0,0,0.5));
+        }
+
+        .product-card:hover .product-img-container img {
+            transform: scale(1.1);
+        }
+
+        /* --- NOVOS ESTILOS DE BOTÕES (REDONDOS E MODERNOS) --- */
+
+        /* Botão Principal (Hero - Ver Produtos) */
+        .hero-btn {
+            /* Fundo gradiente sutil */
+            background: radial-gradient(circle at center, rgba(57, 255, 20, 0.15) 0%, rgba(0,0,0,1) 100%);
+            border: 2px solid var(--neon-green);
+            border-radius: 9999px; /* Pílula completa */
+            box-shadow: 0 0 30px rgba(57, 255, 20, 0.2);
+            animation: float 4s ease-in-out infinite; 
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+            overflow: hidden;
+            z-index: 10;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            padding: 20px 40px;
+            width: 100%;
+        }
+        
+        /* Brilho interno ao passar o mouse */
+        .hero-btn::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(90deg, transparent, rgba(57, 255, 20, 0.4), transparent);
+            transform: translateX(-100%);
+            transition: transform 0.6s ease;
+        }
+
+        .hero-btn:hover {
+            transform: translateY(-5px) scale(1.02);
+            box-shadow: 0 0 60px rgba(57, 255, 20, 0.6);
+            background: radial-gradient(circle at center, rgba(57, 255, 20, 0.25) 0%, rgba(0,0,0,1) 100%);
+        }
+
+        .hero-btn:hover::after {
+            transform: translateX(100%);
+        }
+
+        .hero-btn i {
+            font-size: 2.5rem;
+            color: var(--neon-green);
+            filter: drop-shadow(0 0 5px var(--neon-green));
+        }
+
+        /* Botões Secundários (Pílulas Minimalistas) */
+        .secondary-btn {
+            border-radius: 9999px; /* Totalmente redondo */
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            padding: 16px 24px;
+            cursor: pointer;
+            width: 100%;
+        }
+
+        .secondary-btn:hover {
+            background: rgba(57, 255, 20, 0.1);
+            border-color: var(--neon-green);
+            transform: translateY(-3px);
+            box-shadow: 0 5px 20px rgba(0,0,0,0.5);
+        }
+
+        .secondary-btn i {
+            font-size: 1.4rem;
+            color: #ccc;
+            transition: 0.3s;
+        }
+
+        .secondary-btn:hover i {
+            color: var(--neon-green);
+            transform: scale(1.1);
+        }
+
+        .secondary-btn span {
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.9rem;
+            letter-spacing: 1px;
+        }
+
+    </style>
+</head>
+<body>
+
+    <!-- Header Fixo -->
+    <header class="p-3 sticky top-0 z-50 glass border-b border-white/5 shadow-lg">
+        <div class="container mx-auto flex justify-between items-center">
+            <div class="flex items-center gap-3 cursor-pointer" onclick="voltarInicio()">
+                <div class="w-10 h-10 bg-black rounded-full flex items-center justify-center overflow-hidden border border-[#39ff14]">
+                    <img src="610716299_17879418489449528_2168736092209174850_n.jpg" alt="Logo VIPCell" class="w-full h-full object-cover">
+                </div>
+                <h1 class="text-xl font-bold tracking-tighter">VIP<span class="neon-text">CELL</span></h1>
+            </div>
+            
+            <button id="btn-voltar" onclick="voltarInicio()" class="hidden text-xs border border-white/20 px-4 py-2 rounded-full hover:bg-white/10 transition uppercase font-bold tracking-wider">
+                <i class="fas fa-arrow-left mr-1"></i> Voltar
+            </button>
+        </div>
+    </header>
+
+    <!-- TELA INICIAL (INTRO + BOTÕES REDONDOS) -->
+    <main id="intro-screen" class="container mx-auto px-4 py-8 min-h-[80vh] flex flex-col justify-center items-center">
+        
+        <!-- Info da Empresa Resumida -->
+        <div class="text-center space-y-4 mb-12 max-w-2xl">
+            <div class="inline-block relative">
+                <div class="absolute inset-0 bg-[#39ff14] opacity-20 blur-3xl rounded-full"></div>
+                <i class="fas fa-microchip text-6xl text-[#39ff14] relative z-10 floating mb-4"></i>
+            </div>
+            <h2 class="text-3xl md:text-5xl font-bold leading-tight">
+                Seu Mundo <br><span class="neon-text">Tecnológico</span>
+            </h2>
+            
+            <div class="flex flex-wrap justify-center gap-3 text-[10px] md:text-xs text-gray-400 mt-4">
+                <span class="bg-white/5 px-4 py-1.5 rounded-full border border-white/10"><i class="fas fa-check text-[#39ff14] mr-1"></i> 14 Anos de Tradição</span>
+                <span class="bg-white/5 px-4 py-1.5 rounded-full border border-white/10"><i class="fas fa-clock text-[#39ff14] mr-1"></i> Reparo em 1h</span>
+                <span class="bg-white/5 px-4 py-1.5 rounded-full border border-white/10"><i class="fas fa-shield-alt text-[#39ff14] mr-1"></i> Garantia Garantida</span>
+            </div>
+        </div>
+
+        <!-- GRADE DE BOTÕES (Estilo Landing Page Arredondado) -->
+        <div class="flex flex-col gap-4 w-full max-w-md mx-auto items-center">
+            
+            <!-- Botão 1: Produtos (O DESTAQUE ARREDONDADO) -->
+            <button onclick="mostrarProdutos()" class="hero-btn group">
+                <i class="fas fa-mobile-screen-button transition-transform group-hover:rotate-12"></i>
+                <div class="flex flex-col items-start">
+                    <span class="text-xl font-bold uppercase tracking-widest text-white leading-none">Ver Produtos</span>
+                    <span class="text-[10px] text-[#39ff14] font-normal mt-1 tracking-wider group-hover:text-white transition-colors">IPHONES, ANDROIDS & ACESSÓRIOS</span>
+                </div>
+                <i class="fas fa-chevron-right text-white text-sm opacity-50 ml-auto group-hover:translate-x-1 transition-transform"></i>
+            </button>
+
+            <!-- Separador visual -->
+            <div class="h-4 w-full flex items-center justify-center">
+                <div class="h-px bg-white/10 w-full"></div>
+                <span class="px-3 text-xs text-gray-500 bg-[#0a0a0a] uppercase">Contato</span>
+                <div class="h-px bg-white/10 w-full"></div>
+            </div>
+
+            <!-- Botões Secundários (Pílulas) -->
+            <a href="https://wa.me/5579999999999" target="_blank" class="secondary-btn">
+                <i class="fab fa-whatsapp"></i>
+                <span>Atendimento Tobias Barreto</span>
+            </a>
+
+            <a href="https://wa.me/5579888888888" target="_blank" class="secondary-btn">
+                <i class="fab fa-whatsapp"></i>
+                <span>Atendimento Itabaianinha</span>
+            </a>
+
+            <a href="#localizacao-mapa" onclick="mostrarLocalNoIntro()" class="secondary-btn">
+                <i class="fas fa-map-marker-alt"></i>
+                <span>Ver Localização</span>
+            </a>
+        </div>
+
+        <!-- Mapa -->
+        <div id="localizacao-mapa" class="hidden mt-8 w-full max-w-md bg-white/5 p-6 rounded-3xl border border-white/10 text-center animate-fade-in">
+            <h4 class="text-[#39ff14] font-bold mb-2">Visite Nossa Loja</h4>
+            <p class="text-sm text-gray-400 mb-4">R. Getúlio Vargas, 584 - Tobias Barreto, SE</p>
+            <a href="https://maps.google.com" target="_blank" class="px-6 py-2 bg-[#39ff14] text-black rounded-full font-bold text-xs uppercase tracking-widest hover:bg-white transition">Abrir no GPS</a>
+        </div>
+
+    </main>
+
+
+    <!-- TELA DE PRODUTOS -->
+    <section id="product-screen" class="hidden-screen container mx-auto px-4 py-8 mb-20 relative z-20">
+        
+        <!-- Menu de Abas (Bolinhas) -->
+        <div class="flex flex-wrap justify-center gap-2 mb-8 sticky top-20 z-40 py-4 bg-[#0a0a0a]/95 backdrop-blur-xl rounded-b-3xl border-b border-white/5 shadow-2xl -mt-4 px-2">
+            <button onclick="openTab('novos', this)" class="category-btn active px-4 py-2 rounded-full border border-white/10 font-bold uppercase tracking-widest text-[10px] md:text-xs">Novos</button>
+            <button onclick="openTab('seminovos', this)" class="category-btn px-4 py-2 rounded-full border border-white/10 font-bold uppercase tracking-widest text-[10px] md:text-xs">Seminovos</button>
+            <button onclick="openTab('acessorios', this)" class="category-btn px-4 py-2 rounded-full border border-white/10 font-bold uppercase tracking-widest text-[10px] md:text-xs">Acessórios</button>
+            <button onclick="openTab('androids', this)" class="category-btn px-4 py-2 rounded-full border border-white/10 font-bold uppercase tracking-widest text-[10px] md:text-xs">Androids</button>
+            <button onclick="openTab('personalizados', this)" class="category-btn px-4 py-2 rounded-full border border-white/10 font-bold uppercase tracking-widest text-[10px] md:text-xs">Personal.</button>
+        </div>
+
+        <!-- LISTA NOVOS -->
+        <div id="novos" class="tab-content active grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            
+            <!-- GUIA DE EDICAO DE PRODUTO -->
+            <!-- 
+                PARA ALTERAR A IMAGEM DO SUPABASE:
+                1. Localize a tag <img> dentro de class="product-img-container"
+                2. Apague o link atual (src="https://via.placeholder...")
+                3. Cole o link público da imagem do seu Supabase dentro das aspas do src=""
+                
+                Exemplo:
+                <img src="https://xyz.supabase.co/storage/v1/object/public/produtos/iphone17.jpg" ...>
+                
+                PARA ALTERAR TEXTOS:
+                1. Mude o texto dentro das tags <h3> (Nome)
+                2. Mude os valores dentro dos <span> (Preços e info)
+            -->
+
+            <!-- Item 1: iPhone 17 Pro Max -->
+            <div class="product-card glass rounded-3xl overflow-hidden border border-white/5 flex flex-col">
+                <div class="product-img-container">
+                    <!-- TROQUE O LINK ABAIXO PELO DO SUPABASE -->
+                    <img src="https://via.placeholder.com/400x400/111111/39ff14?text=iPhone+17+Pro+Max" alt="iPhone 17 Pro Max">
+                    <span class="absolute top-3 right-3 bg-[#39ff14] text-black text-[10px] font-bold px-3 py-1 rounded-full shadow-lg z-20">LANÇAMENTO</span>
+                </div>
+                <div class="p-5 flex-1 flex flex-col justify-between">
+                    <div>
+                        <h3 class="text-lg font-bold mb-1">iPhone 17 Pro Max</h3>
+                        <div class="flex justify-between text-xs text-gray-400 mb-4 border-b border-white/10 pb-2">
+                            <span>1TB</span>
+                            <span class="text-white">Titanium</span>
+                        </div>
+                    </div>
+                    <div class="bg-black/40 p-4 rounded-2xl border border-white/5 mb-4">
+                        <div class="flex justify-between items-center mb-1">
+                            <span class="text-[10px] text-gray-400">À Vista</span>
+                            <span class="text-lg font-bold text-[#39ff14]">R$ 11.990</span>
+                        </div>
+                        <div class="flex justify-between items-center text-[10px]">
+                            <span class="text-gray-400">Cartão</span>
+                            <span>12x R$ 1.099</span>
+                        </div>
+                    </div>
+                    <button onclick="comprarZap('iPhone 17 Pro Max', '11.990')" class="w-full py-3 bg-white hover:bg-[#39ff14] text-black font-bold rounded-full transition text-sm flex items-center justify-center gap-2 shadow-lg">
+                        <i class="fab fa-whatsapp"></i> Tenho Interesse
+                    </button>
+                </div>
+            </div>
+
+            <!-- Item: iPhone 16 Pro Max -->
+            <div class="product-card glass rounded-3xl overflow-hidden border border-white/5 flex flex-col">
+                <div class="product-img-container">
+                    <!-- TROQUE O LINK ABAIXO PELO DO SUPABASE -->
+                    <img src="https://via.placeholder.com/400x400/111111/39ff14?text=iPhone+16+Pro+Max" alt="iPhone 16 Pro Max">
+                </div>
+                <div class="p-5 flex-1 flex flex-col justify-between">
+                    <div>
+                        <h3 class="text-lg font-bold mb-1">iPhone 16 Pro Max</h3>
+                        <div class="flex justify-between text-xs text-gray-400 mb-4 border-b border-white/10 pb-2">
+                            <span>512GB</span>
+                            <span class="text-white">Natural</span>
+                        </div>
+                    </div>
+                    <div class="bg-black/40 p-4 rounded-2xl border border-white/5 mb-4">
+                        <div class="flex justify-between items-center mb-1">
+                            <span class="text-[10px] text-gray-400">À Vista</span>
+                            <span class="text-lg font-bold text-[#39ff14]">R$ 8.990</span>
+                        </div>
+                         <div class="flex justify-between items-center text-[10px]">
+                            <span class="text-gray-400">Cartão</span>
+                            <span>12x R$ 835</span>
+                        </div>
+                    </div>
+                    <button onclick="comprarZap('iPhone 16 Pro Max', '8.990')" class="w-full py-3 bg-white hover:bg-[#39ff14] text-black font-bold rounded-full transition text-sm flex items-center justify-center gap-2 shadow-lg">
+                        <i class="fab fa-whatsapp"></i> Tenho Interesse
+                    </button>
+                </div>
+            </div>
+
+             <!-- Item 3: iPhone 15 Pro Max -->
+             <div class="product-card glass rounded-3xl overflow-hidden border border-white/5 flex flex-col">
+                <div class="product-img-container">
+                    <img src="https://via.placeholder.com/400x400/111111/39ff14?text=iPhone+15+Pro+Max" alt="iPhone 15 Pro Max">
+                </div>
+                <div class="p-5 flex-1 flex flex-col justify-between">
+                    <div>
+                        <h3 class="text-lg font-bold mb-1">iPhone 15 Pro Max</h3>
+                        <div class="flex justify-between text-xs text-gray-400 mb-4 border-b border-white/10 pb-2">
+                            <span>256GB</span>
+                            <span class="text-white">Azul</span>
+                        </div>
+                    </div>
+                    <div class="bg-black/40 p-4 rounded-2xl border border-white/5 mb-4">
+                        <div class="flex justify-between items-center mb-1">
+                            <span class="text-[10px] text-gray-400">À Vista</span>
+                            <span class="text-lg font-bold text-[#39ff14]">R$ 7.190</span>
+                        </div>
+                         <div class="flex justify-between items-center text-[10px]">
+                            <span class="text-gray-400">Cartão</span>
+                            <span>12x R$ 670</span>
+                        </div>
+                    </div>
+                    <button onclick="comprarZap('iPhone 15 Pro Max', '7.190')" class="w-full py-3 bg-white hover:bg-[#39ff14] text-black font-bold rounded-full transition text-sm flex items-center justify-center gap-2 shadow-lg">
+                        <i class="fab fa-whatsapp"></i> Tenho Interesse
+                    </button>
+                </div>
+            </div>
+
+            <!-- Item 4: iPhone 14 Pro Max -->
+            <div class="product-card glass rounded-3xl overflow-hidden border border-white/5 flex flex-col">
+                <div class="product-img-container">
+                    <img src="https://via.placeholder.com/400x400/111111/39ff14?text=iPhone+14+Pro+Max" alt="iPhone 14 Pro Max">
+                </div>
+                <div class="p-5 flex-1 flex flex-col justify-between">
+                    <div>
+                        <h3 class="text-lg font-bold mb-1">iPhone 14 Pro Max</h3>
+                        <div class="flex justify-between text-xs text-gray-400 mb-4 border-b border-white/10 pb-2">
+                            <span>128GB</span>
+                            <span class="text-white">Roxo</span>
+                        </div>
+                    </div>
+                    <div class="bg-black/40 p-4 rounded-2xl border border-white/5 mb-4">
+                        <div class="flex justify-between items-center mb-1">
+                            <span class="text-[10px] text-gray-400">À Vista</span>
+                            <span class="text-lg font-bold text-[#39ff14]">R$ 5.990</span>
+                        </div>
+                         <div class="flex justify-between items-center text-[10px]">
+                            <span class="text-gray-400">Cartão</span>
+                            <span>12x R$ 560</span>
+                        </div>
+                    </div>
+                    <button onclick="comprarZap('iPhone 14 Pro Max', '5.990')" class="w-full py-3 bg-white hover:bg-[#39ff14] text-black font-bold rounded-full transition text-sm flex items-center justify-center gap-2 shadow-lg">
+                        <i class="fab fa-whatsapp"></i> Tenho Interesse
+                    </button>
+                </div>
+            </div>
+
+            <!-- Item 5: iPhone 13 Pro Max -->
+            <div class="product-card glass rounded-3xl overflow-hidden border border-white/5 flex flex-col">
+                <div class="product-img-container">
+                    <img src="https://via.placeholder.com/400x400/111111/39ff14?text=iPhone+13+Pro+Max" alt="iPhone 13 Pro Max">
+                </div>
+                <div class="p-5 flex-1 flex flex-col justify-between">
+                    <div>
+                        <h3 class="text-lg font-bold mb-1">iPhone 13 Pro Max</h3>
+                        <div class="flex justify-between text-xs text-gray-400 mb-4 border-b border-white/10 pb-2">
+                            <span>128GB</span>
+                            <span class="text-white">Verde</span>
+                        </div>
+                    </div>
+                    <div class="bg-black/40 p-4 rounded-2xl border border-white/5 mb-4">
+                        <div class="flex justify-between items-center mb-1">
+                            <span class="text-[10px] text-gray-400">À Vista</span>
+                            <span class="text-lg font-bold text-[#39ff14]">R$ 4.890</span>
+                        </div>
+                         <div class="flex justify-between items-center text-[10px]">
+                            <span class="text-gray-400">Cartão</span>
+                            <span>12x R$ 455</span>
+                        </div>
+                    </div>
+                    <button onclick="comprarZap('iPhone 13 Pro Max', '4.890')" class="w-full py-3 bg-white hover:bg-[#39ff14] text-black font-bold rounded-full transition text-sm flex items-center justify-center gap-2 shadow-lg">
+                        <i class="fab fa-whatsapp"></i> Tenho Interesse
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- LISTA SEMINOVOS -->
+        <div id="seminovos" class="tab-content grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+             <div class="product-card glass rounded-3xl overflow-hidden border border-white/5 flex flex-col">
+                <div class="product-img-container">
+                    <!-- TROQUE O LINK ABAIXO PELO DO SUPABASE -->
+                    <img src="https://via.placeholder.com/400x400/111111/39ff14?text=iPhone+15+Pro+Semi" alt="iPhone 15 Pro">
+                    <span class="absolute top-3 left-3 bg-[#39ff14] text-black text-[10px] font-bold px-3 py-1 rounded-full shadow-lg z-20">BATERIA 100%</span>
+                </div>
+                <div class="p-5 flex-1 flex flex-col justify-between">
+                    <div>
+                        <h3 class="text-lg font-bold mb-1">iPhone 15 Pro (Semi)</h3>
+                        <div class="flex justify-between text-xs text-gray-400 mb-4 border-b border-white/10 pb-2">
+                            <span>128GB</span>
+                            <span class="text-white">Impecável</span>
+                        </div>
+                    </div>
+                    <div class="bg-black/40 p-4 rounded-2xl border border-white/5 mb-4">
+                        <div class="flex justify-between items-center mb-1">
+                            <span class="text-[10px] text-gray-400">À Vista</span>
+                            <span class="text-lg font-bold text-[#39ff14]">R$ 5.800</span>
+                        </div>
+                        <div class="flex justify-between items-center text-[10px]">
+                            <span class="text-gray-400">Bateria</span>
+                            <span class="text-[#39ff14]">Saúde 100%</span>
+                        </div>
+                    </div>
+                    <button onclick="comprarZap('iPhone 15 Pro Seminovo', '5.800')" class="w-full py-3 bg-white hover:bg-[#39ff14] text-black font-bold rounded-full transition text-sm flex items-center justify-center gap-2 shadow-lg">
+                        <i class="fab fa-whatsapp"></i> Consultar
+                    </button>
+                </div>
+            </div>
+            <!-- ... Outros itens Seminovos ... -->
+        </div>
+
+        <!-- LISTA ACESSÓRIOS -->
+        <div id="acessorios" class="tab-content grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+             <div class="glass p-5 rounded-3xl text-center space-y-3 flex flex-col items-center hover:bg-white/5 transition border border-white/5">
+                <div class="w-full h-32 flex items-center justify-center mb-2 bg-black/30 rounded-full w-32 h-32 mx-auto relative group">
+                    <div class="absolute inset-0 bg-[#39ff14] opacity-0 group-hover:opacity-20 rounded-full blur-xl transition duration-500"></div>
+                    <i class="fas fa-headset text-6xl text-[#39ff14] z-10 relative"></i>
+                </div>
+                <h3 class="font-bold text-lg">AirPods Pro Gen 2</h3>
+                <div class="py-2 w-full">
+                    <p class="text-xl font-bold text-[#39ff14]">R$ 1.890</p>
+                    <p class="text-[10px] text-gray-400">ou 10x de R$ 210</p>
+                </div>
+                <button onclick="comprarZap('AirPods Pro', '1.890')" class="w-full py-2 border border-white/20 rounded-full hover:bg-[#39ff14] hover:text-black hover:border-[#39ff14] transition text-sm font-bold uppercase tracking-wider">Comprar</button>
+            </div>
+            <div class="glass p-5 rounded-3xl text-center space-y-3 flex flex-col items-center hover:bg-white/5 transition border border-white/5">
+                <div class="w-full h-32 flex items-center justify-center mb-2 bg-black/30 rounded-full w-32 h-32 mx-auto relative group">
+                    <div class="absolute inset-0 bg-[#39ff14] opacity-0 group-hover:opacity-20 rounded-full blur-xl transition duration-500"></div>
+                    <i class="fas fa-bolt text-6xl text-[#39ff14] z-10 relative"></i>
+                </div>
+                <h3 class="font-bold text-lg">Fonte 20W USB-C</h3>
+                <div class="py-2 w-full">
+                    <p class="text-xl font-bold text-[#39ff14]">R$ 199</p>
+                    <p class="text-[10px] text-gray-400">Original Apple</p>
+                </div>
+                <button onclick="comprarZap('Fonte 20W', '199')" class="w-full py-2 border border-white/20 rounded-full hover:bg-[#39ff14] hover:text-black hover:border-[#39ff14] transition text-sm font-bold uppercase tracking-wider">Comprar</button>
+            </div>
+             <div class="glass p-5 rounded-3xl text-center space-y-3 flex flex-col items-center hover:bg-white/5 transition border border-white/5">
+                <div class="w-full h-32 flex items-center justify-center mb-2 bg-black/30 rounded-full w-32 h-32 mx-auto relative group">
+                    <div class="absolute inset-0 bg-[#39ff14] opacity-0 group-hover:opacity-20 rounded-full blur-xl transition duration-500"></div>
+                    <i class="fas fa-shield-alt text-6xl text-[#39ff14] z-10 relative"></i>
+                </div>
+                <h3 class="font-bold text-lg">Película 3D Privativa</h3>
+                <div class="py-2 w-full">
+                    <p class="text-xl font-bold text-[#39ff14]">R$ 40</p>
+                    <p class="text-[10px] text-gray-400">Instalação Grátis</p>
+                </div>
+                <button onclick="comprarZap('Película 3D', '40')" class="w-full py-2 border border-white/20 rounded-full hover:bg-[#39ff14] hover:text-black hover:border-[#39ff14] transition text-sm font-bold uppercase tracking-wider">Comprar</button>
+            </div>
+        </div>
+
+        <!-- LISTA ANDROIDS -->
+        <div id="androids" class="tab-content grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div class="product-card glass rounded-3xl overflow-hidden border border-white/5">
+                <div class="product-img-container">
+                    <img src="https://via.placeholder.com/400x400/111111/39ff14?text=S23+Ultra" alt="S23 Ultra">
+                </div>
+                <div class="p-5 space-y-4">
+                    <div class="flex justify-between items-start">
+                        <h3 class="text-xl font-bold">Samsung S23 Ultra</h3>
+                        <i class="fab fa-android text-2xl text-[#39ff14]"></i>
+                    </div>
+                    <div class="grid grid-cols-2 gap-2 py-2">
+                        <div class="bg-white/5 p-2 rounded-xl text-center border border-white/5">
+                            <p class="text-[10px] text-gray-400">RAM</p>
+                            <p class="font-bold text-xs">12GB</p>
+                        </div>
+                        <div class="bg-white/5 p-2 rounded-xl text-center border border-white/5">
+                            <p class="text-[10px] text-gray-400">Armazenamento</p>
+                            <p class="font-bold text-xs">512GB</p>
+                        </div>
+                    </div>
+                    <div class="bg-black/50 p-4 rounded-2xl border border-white/5">
+                        <p class="text-2xl font-bold neon-text text-center">R$ 4.990</p>
+                    </div>
+                    <button onclick="comprarZap('Samsung S23 Ultra', '4.990')" class="w-full py-3 bg-white text-black font-bold rounded-full hover:bg-[#39ff14] transition shadow-lg">Ver Mais</button>
+                </div>
+            </div>
+             <div class="product-card glass rounded-3xl overflow-hidden border border-white/5">
+                <div class="product-img-container">
+                    <img src="https://via.placeholder.com/400x400/111111/39ff14?text=Xiaomi+Note+13" alt="Xiaomi">
+                </div>
+                <div class="p-5 space-y-4">
+                    <div class="flex justify-between items-start">
+                        <h3 class="text-xl font-bold">Xiaomi Note 13</h3>
+                        <i class="fab fa-android text-2xl text-[#39ff14]"></i>
+                    </div>
+                    <div class="grid grid-cols-2 gap-2 py-2">
+                        <div class="bg-white/5 p-2 rounded-xl text-center border border-white/5">
+                            <p class="text-[10px] text-gray-400">RAM</p>
+                            <p class="font-bold text-xs">8GB</p>
+                        </div>
+                        <div class="bg-white/5 p-2 rounded-xl text-center border border-white/5">
+                            <p class="text-[10px] text-gray-400">Armazenamento</p>
+                            <p class="font-bold text-xs">256GB</p>
+                        </div>
+                    </div>
+                    <div class="bg-black/50 p-4 rounded-2xl border border-white/5">
+                        <p class="text-2xl font-bold neon-text text-center">R$ 1.390</p>
+                    </div>
+                    <button onclick="comprarZap('Xiaomi Note 13', '1.390')" class="w-full py-3 bg-white text-black font-bold rounded-full hover:bg-[#39ff14] transition shadow-lg">Ver Mais</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- LISTA PERSONALIZADOS -->
+        <div id="personalizados" class="tab-content grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="glass p-8 rounded-3xl border border-[#39ff14]/30 flex flex-col justify-center text-center hover:bg-white/5 transition group">
+                <div class="mb-6 transform group-hover:scale-110 transition duration-300">
+                    <i class="fas fa-mug-hot text-6xl text-[#39ff14] drop-shadow-[0_0_15px_rgba(57,255,20,0.5)]"></i>
+                </div>
+                <h3 class="text-2xl font-bold mb-2">Canecas Laser</h3>
+                <p class="text-gray-400 text-sm mb-6">Grave sua logo ou nome com precisão milimétrica.</p>
+                <div class="bg-white/5 p-4 rounded-xl mb-6 border border-white/5">
+                    <span class="font-bold text-xl neon-text">Consulte Cores</span>
+                </div>
+                <button onclick="comprarZap('Personalizado Caneca', 'A combinar')" class="w-full py-4 bg-[#39ff14] text-black font-bold rounded-full shadow-lg hover:shadow-[0_0_20px_rgba(57,255,20,0.6)] transition">Solicitar Orçamento</button>
+            </div>
+            <div class="glass p-8 rounded-3xl border border-[#39ff14]/30 flex flex-col justify-center text-center hover:bg-white/5 transition group">
+                <div class="mb-6 transform group-hover:scale-110 transition duration-300">
+                    <i class="fas fa-cube text-6xl text-[#39ff14] drop-shadow-[0_0_15px_rgba(57,255,20,0.5)]"></i>
+                </div>
+                <h3 class="text-2xl font-bold mb-2">Impressão 3D</h3>
+                <p class="text-gray-400 text-sm mb-6">Peças de reposição, action figures e protótipos.</p>
+                 <div class="bg-white/5 p-4 rounded-xl mb-6 border border-white/5">
+                    <span class="font-bold text-xl neon-text">Sob Medida</span>
+                </div>
+                <button onclick="comprarZap('Projeto 3D', 'A combinar')" class="w-full py-4 bg-[#39ff14] text-black font-bold rounded-full shadow-lg hover:shadow-[0_0_20px_rgba(57,255,20,0.6)] transition">Solicitar Orçamento</button>
+            </div>
+        </div>
+
+    </section>
+
+    <!-- Rodapé -->
+    <footer id="localizacao" class="bg-black py-16 mt-12 border-t border-white/5 relative z-20">
+        <div class="container mx-auto px-4 grid grid-cols-1 md:grid-cols-3 gap-12 text-center md:text-left">
+            <div class="space-y-4">
+                <h4 class="text-xl font-bold neon-text mb-4">Onde Estamos</h4>
+                <p class="text-gray-400 text-sm leading-relaxed">
+                    R. Getúlio Vargas, 584<br>
+                    Centro - Tobias Barreto, SE<br>
+                    CEP: 49300-000
+                </p>
+                <a href="https://maps.google.com" target="_blank" class="inline-block mt-4 px-6 py-2 border border-[#39ff14] text-[#39ff14] rounded-full hover:bg-[#39ff14] hover:text-black transition text-xs font-bold tracking-widest uppercase">Abrir no Mapa</a>
+            </div>
+            <div class="space-y-4">
+                <h4 class="text-xl font-bold neon-text mb-4">Horários</h4>
+                <ul class="text-gray-400 text-sm space-y-3">
+                    <li class="flex justify-between border-b border-white/5 pb-2"><span>Segunda - Sexta</span> <span class="text-white">08:00 – 18:00</span></li>
+                    <li class="flex justify-between border-b border-white/5 pb-2"><span>Sábado</span> <span class="text-white">08:00 – 13:00</span></li>
+                    <li class="flex justify-between text-red-500 font-bold"><span>Domingo</span> <span>Fechado</span></li>
+                </ul>
+            </div>
+            <div class="space-y-4 flex flex-col items-center md:items-start">
+                <h4 class="text-xl font-bold neon-text mb-4">Social</h4>
+                <div class="flex gap-4">
+                    <a href="#" class="w-12 h-12 glass rounded-full flex items-center justify-center hover:bg-[#39ff14] hover:text-black transition text-xl shadow-lg hover:scale-110">
+                        <i class="fab fa-instagram"></i>
+                    </a>
+                    <a href="#" class="w-12 h-12 glass rounded-full flex items-center justify-center hover:bg-[#39ff14] hover:text-black transition text-xl shadow-lg hover:scale-110">
+                        <i class="fab fa-facebook-f"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="text-center mt-12 pt-8 border-t border-white/5 text-[10px] text-gray-600 tracking-widest uppercase">
+            VIPCell © 2024 - Todos os direitos reservados
+        </div>
+    </footer>
+
+    <!-- Botão Zap Fixo -->
+    <a href="https://wa.me/5579999999999" class="fixed bottom-6 right-6 w-16 h-16 bg-[#25D366] rounded-full flex items-center justify-center shadow-[0_0_25px_rgba(37,211,102,0.6)] z-50 hover:scale-110 transition animate-bounce">
+        <i class="fab fa-whatsapp text-4xl text-white"></i>
+    </a>
+
+    <script>
+        // Funções de Transição de Tela
+        function mostrarProdutos() {
+            document.getElementById('intro-screen').classList.add('hidden-screen');
+            document.getElementById('product-screen').classList.remove('hidden-screen');
+            // Mostra o botão voltar no header
+            document.getElementById('btn-voltar').classList.remove('hidden');
+            // Garante que a primeira aba carregue
+            openTab('novos', document.querySelector("button[onclick*='novos']"));
+            window.scrollTo(0,0);
+        }
+
+        function voltarInicio() {
+            document.getElementById('product-screen').classList.add('hidden-screen');
+            document.getElementById('intro-screen').classList.remove('hidden-screen');
+            // Esconde o botão voltar
+            document.getElementById('btn-voltar').classList.add('hidden');
+        }
+
+        function mostrarLocalNoIntro() {
+            const mapa = document.getElementById('localizacao-mapa');
+            mapa.classList.remove('hidden');
+            // Pequena animação
+            mapa.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // Função de Abas
+        function openTab(tabName, btnElement) {
+            const contents = document.querySelectorAll('.tab-content');
+            contents.forEach(content => {
+                content.classList.remove('active');
+                content.style.display = 'none';
+            });
+
+            const buttons = document.querySelectorAll('.category-btn');
+            buttons.forEach(btn => btn.classList.remove('active'));
+
+            const selectedTab = document.getElementById(tabName);
+            if(selectedTab) {
+                selectedTab.style.display = '';
+                setTimeout(() => {
+                    selectedTab.classList.add('active');
+                }, 10);
+            }
+
+            if(btnElement) {
+                btnElement.classList.add('active');
+            }
+        }
+
+        function comprarZap(produto, preco) {
+            const telefone = "5579999999999"; 
+            const mensagem = `Olá VIPCell! Gostei do *${produto}* que vi no site por *R$ ${preco}*. Gostaria de saber mais detalhes e se está disponível.`;
+            const url = `https://wa.me/${telefone}?text=${encodeURIComponent(mensagem)}`;
+            window.open(url, '_blank');
+        }
+
+    </script>
+</body>
+</html>
